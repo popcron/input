@@ -21,6 +21,26 @@ namespace Popcron.Input
         private List<Controller> controllers = new List<Controller>();
         private float[] lastAxis = new float[5 * 28];
 
+        /// <summary>
+        /// The current input map being used
+        /// </summary>
+        public Map Map
+        {
+            get
+            {
+                return map;
+            }
+            set
+            {
+                map = value;
+            }
+        }
+
+        /// <summary>
+        /// List of all controllers available in the project
+        /// </summary>
+        public List<ControllerType> Controllers => allControllers;
+
         private void Awake()
         {
             instance = this;

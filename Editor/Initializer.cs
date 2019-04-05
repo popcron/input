@@ -16,6 +16,9 @@ namespace Popcron.Input
                 //check the input manager settings
                 ControlsHelper.ResetUnityInputs();
             }
+
+            //load all controllers
+            ControlsHelper.LoadAllControllers();
         }
     }
 }

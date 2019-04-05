@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Popcron.Input
 {
@@ -49,6 +52,46 @@ namespace Popcron.Input
 
             //if we get here we didn't find it
             return null;
+        }
+
+        public static void LoadAllControllers()
+        {
+            //find a controls manager in the scene
+            ControlsManager controlsManager = Object.FindObjectOfType<ControlsManager>();
+            if (!controlsManager)
+            {
+                controlsManager = new GameObject("ControlsManager").AddComponent<ControlsManager>();
+
+                //mark scene dirty
+                Scene activeScene = SceneManager.GetActiveScene();
+                EditorSceneManager.MarkSceneDirty(activeScene);
+            }
+
+            controlsManager.Controllers.Clear();
+
+            string[] guids = AssetDatabase.FindAssets("t:Popcron.Input.ControllerType");
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                ControllerType controller = AssetDatabase.LoadAssetAtPath<ControllerType>(path);
+                controlsManager.Controllers.Add(controller);
+            }
+
+            EditorUtility.SetDirty(controlsManager);
+        }
+
+        public static void AddController(ControllerType controller)
+        {
+            //find a controls manager in the scene
+            ControlsManager controlsManager = Object.FindObjectOfType<ControlsManager>();
+            if (!controlsManager)
+            {
+                LoadAllControllers();
+                return;
+            }
+
+            controlsManager.Controllers.Add(controller);
+            EditorUtility.SetDirty(controlsManager);
         }
 
         private static bool Exists(int axisNumber, int joyStick)

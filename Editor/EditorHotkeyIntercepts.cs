@@ -21,7 +21,7 @@ public class EditorHotkeyIntercepts
 
     static EditorHotkeyIntercepts()
     {
-        string key = SystemInfo.deviceUniqueIdentifier + "." + UnityEditor.PlayerSettings.productGUID + ".Interception.HookID";
+        string key = SystemInfo.deviceUniqueIdentifier + "." + PlayerSettings.productGUID + ".Interception.HookID";
         IntPtr oldHookId = new IntPtr(EditorPrefs.GetInt(key));
         UnhookWindowsHookEx(oldHookId);
 

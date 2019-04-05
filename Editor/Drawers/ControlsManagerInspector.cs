@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -71,7 +72,7 @@ namespace Popcron.Input
                     if (newShow)
                     {
                         EditorGUI.indentLevel++;
-                        
+
                         //show axes
                         for (int a = 0; a < Controls.MaxJoystickAxes; a++)
                         {
@@ -108,7 +109,74 @@ namespace Popcron.Input
             }
             else
             {
-                EditorGUILayout.LabelField("Game not running, inputs wont be shown", EditorStyles.miniLabel);
+                EditorGUILayout.LabelField("Game not running, inputs wont be detected.", EditorStyles.miniLabel);
+            }
+
+            //check if map is present
+            if (!manager.Map)
+            {
+                EditorGUILayout.HelpBox("No input Map being used.", MessageType.Error);
+
+                //create a new map
+                if (GUILayout.Button("Create new map"))
+                {
+                    Map map = CreateInstance<Map>();
+                    map.name = "New controller";
+
+                    string path = Path.Combine("Assets", "New input map.asset");
+                    AssetDatabase.CreateAsset(map, path);
+
+                    manager.Map = map;
+                    EditorUtility.SetDirty(manager);
+                    EditorGUIUtility.PingObject(map);
+                }
+            }
+
+            bool hasControllers = false;
+            for (int i = 0; i < manager.Controllers.Count; i++)
+            {
+                if (manager.Controllers[i])
+                {
+                    hasControllers = true;
+                    break;
+                }
+            }
+
+            //check how many controllers are present
+            if (!hasControllers)
+            {
+                EditorGUILayout.HelpBox("No controllers are present.", MessageType.Warning);
+
+                //create a new controller
+                if (GUILayout.Button("Create new controller"))
+                {
+                    ControllerType controller = CreateInstance<ControllerType>();
+                    controller.name = "New controller";
+
+                    string path = Path.Combine("Assets", "New controller.asset");
+                    AssetDatabase.CreateAsset(controller, path);
+
+                    //populate the first empty slot
+                    bool added = false;
+                    for (int i = 0; i < manager.Controllers.Count; i++)
+                    {
+                        if (manager.Controllers[i] == null)
+                        {
+                            manager.Controllers[i] = controller;
+                            added = true;
+                            break;
+                        }
+                    }
+
+                    //add to end of list then
+                    if (!added)
+                    {
+                        manager.Controllers.Add(controller);
+                    }
+
+                    EditorUtility.SetDirty(manager);
+                    EditorGUIUtility.PingObject(controller);
+                }
             }
         }
     }
