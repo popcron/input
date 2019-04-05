@@ -1,6 +1,9 @@
 # Input
 This is a simple wrapper built on top of the existing unity input system, created in order to add easier support for changing inputs while the game is running and multiple controller support.
 
+## Features
+* Ability to use Control while in play mode
+
 ## Installing
 To install for use in Unity, copy everything from this repository to `<YourNewUnityProject>/Packages/Popcron.Input` folder.
 
