@@ -46,6 +46,34 @@ namespace Popcron.Input
             instance = this;
         }
 
+        private void Reset()
+        {
+            CheckInstances();
+        }
+
+        private void CheckInstances()
+        {
+#if UNITY_EDITOR
+            ControlsManager otherManager = null;
+            ControlsManager[] managers = FindObjectsOfType<ControlsManager>();
+            for (int i = 0; i < managers.Length; i++)
+            {
+                if (managers[i] != this)
+                {
+                    otherManager = managers[i];
+                    break;
+                }
+            }
+
+            if (otherManager)
+            {
+                Debug.Log("Another Controls manager instance already exists!");
+                UnityEditor.EditorGUIUtility.PingObject(otherManager);
+                DestroyImmediate(this);
+            }
+#endif
+        }
+
         private void OnEnable()
         {
             instance = this;
