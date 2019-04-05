@@ -77,6 +77,7 @@ namespace Popcron.Input
                 controlsManager.Controllers.Add(controller);
             }
 
+            Controls.Types = controlsManager.Controllers;
             EditorUtility.SetDirty(controlsManager);
         }
 
@@ -91,6 +92,7 @@ namespace Popcron.Input
             }
 
             controlsManager.Controllers.Add(controller);
+            Controls.Types = controlsManager.Controllers;
             EditorUtility.SetDirty(controlsManager);
         }
 
@@ -140,9 +142,8 @@ namespace Popcron.Input
             SerializedObject serializedObject = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset")[0]);
             axesProperty = serializedObject.FindProperty("m_Axes");
 
-            //check how many inputs there are, if it changed then reset the inputs
-
             //delete all
+            axesProperty.ClearArray();
             axesProperty.arraySize = 0;
 
             //create all

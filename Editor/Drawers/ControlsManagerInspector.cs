@@ -172,6 +172,7 @@ namespace Popcron.Input
                     if (!added)
                     {
                         manager.Controllers.Add(controller);
+                        Controls.Types = manager.Controllers;
                     }
 
                     EditorUtility.SetDirty(manager);
