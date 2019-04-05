@@ -148,6 +148,11 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
+            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (instance.controllers.Count <= joyStick) return false;
 
             Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
@@ -182,6 +187,11 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
+            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (instance.controllers.Count <= joyStick) return false;
 
             Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
@@ -216,6 +226,11 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
+            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (instance.controllers.Count <= joyStick) return false;
 
             Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)

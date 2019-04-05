@@ -22,6 +22,11 @@ namespace Popcron.Input
             return "joystick " + (joyStick + 1) + " button " + buttonNumber;
         }
 
+        /// <summary>
+        /// Returns the type of bind (keyboard, controller, mouse, etc)
+        /// </summary>
+        /// <param name="bind"></param>
+        /// <returns></returns>
         public static string GetBindType(string bind)
         {
             //check if its a hard wired button
@@ -158,51 +163,111 @@ namespace Popcron.Input
 
         public static Vector2 GetLeftThumb(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return Vector2.zero;
+
             return Controllers[joyStick].GetLeftThumb();
         }
 
         public static Vector2 GetRightThumb(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return Vector2.zero;
+
             return Controllers[joyStick].GetRightThumb();
         }
 
         public static bool GetLeftThumbDown(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetLeftThumbDown();
         }
 
         public static bool GetRightThumbDown(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetRightThumbDown();
         }
 
         public static bool GetStart(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetStart();
         }
 
         public static bool GetSelect(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetSelect();
         }
 
         public static bool GetLeftBumper(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetLeftBumper();
         }
 
         public static bool GetRightBumper(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
             return Controllers[joyStick].GetRightBumper();
         }
 
         public static float GetLeftTrigger(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return 0f;
+
             return Controllers[joyStick].GetLeftTrigger();
         }
 
         public static float GetRightTrigger(int joyStick = 0)
         {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return 0f;
+
             return Controllers[joyStick].GetRightTrigger();
         }
 
