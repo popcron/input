@@ -22,3 +22,5 @@ bool jumpPlayer1 = Controls.GetButtonDown("Jump");
 bool jumpPlayer2 = Controls.GetButtonDown("Jump", 1);
 bool jumpPlayer3 = Controls.GetButtonDown("Jump", 2);
 ```
+
+[Example](https://media.discordapp.net/attachments/461266635383111680/563847701255553075/unknown.png)
