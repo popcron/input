@@ -16,7 +16,13 @@ namespace Popcron.Input
         private Map map;
 
         [SerializeField]
+        private ControllerType defaultController;
+
+        [SerializeField]
         private List<ControllerType> allControllers = new List<ControllerType>();
+
+        [SerializeField]
+        private string[] joysticks;
 
         private List<Controller> controllers = new List<Controller>();
         private float[] lastAxis = new float[5 * 28];
@@ -40,6 +46,18 @@ namespace Popcron.Input
         /// List of all controllers available in the project
         /// </summary>
         public List<ControllerType> Controllers => allControllers;
+
+        public ControllerType DefaultController
+        {
+            get
+            {
+                return defaultController;
+            }
+            set
+            {
+                defaultController = value;
+            }
+        }
 
         private void Awake()
         {
@@ -83,6 +101,8 @@ namespace Popcron.Input
         {
             for (int i = 0; i < allControllers.Count; i++)
             {
+                if (allControllers[i] == defaultController) continue;
+
                 string a = allControllers[i].controllerName.ToLower().Replace(" ", "");
                 string b = joystickName.ToLower().Replace(" ", "");
 
@@ -99,7 +119,7 @@ namespace Popcron.Input
         {
             //set static value
             Controls.Controllers = controllers;
-            string[] joysticks = Input.GetJoystickNames();
+            joysticks = Input.GetJoystickNames();
             if (joysticks.Length > 0)
             {
                 //load controllers
@@ -108,6 +128,11 @@ namespace Popcron.Input
                 for (int j = 0; j < joysticks.Length; j++)
                 {
                     ControllerType type = GetController(joysticks[j]);
+                    if (type == null)
+                    {
+                        type = defaultController;
+                    }
+
                     Controller controller = new Controller(type, j);
                     controllers.Add(controller);
 

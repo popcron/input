@@ -40,72 +40,87 @@ namespace Popcron.Input
             if (Application.isPlaying)
             {
                 //resize the show list if the controller count changed
-                if (show.Count != Controls.Controllers.Count)
+                if (Controls.Controllers.Count == 0)
                 {
-                    if (show.Count > Controls.Controllers.Count)
+                    if (show.Count != 0)
                     {
-                        while (show.Count > Controls.Controllers.Count)
-                        {
-                            show.Add(true);
-                        }
+                        show.Clear();
+                        EditorPrefs.SetString(ShowKey, "");
                     }
-                    else
+                }
+                else
+                {
+                    if (show.Count != Controls.Controllers.Count)
                     {
-                        while (show.Count < Controls.Controllers.Count)
+                        if (show.Count > Controls.Controllers.Count)
                         {
-                            show.Add(false);
+                            while (show.Count > Controls.Controllers.Count)
+                            {
+                                show.Add(true);
+                            }
+                        }
+                        else
+                        {
+                            while (show.Count < Controls.Controllers.Count)
+                            {
+                                show.Add(false);
+                            }
                         }
                     }
                 }
 
                 EditorGUILayout.LabelField("Connected Controllers: ");
                 EditorGUI.indentLevel++;
-                for (int j = 0; j < Controls.Controllers.Count; j++)
                 {
-                    bool newShow = EditorGUILayout.Foldout(show[j], Controls.Controllers[j].Name);
-                    if (newShow != show[j])
+                    for (int j = 0; j < Controls.Controllers.Count; j++)
                     {
-                        show[j] = newShow;
-                        EditorPrefs.SetString(ShowKey, string.Join(",", show));
-                    }
-
-                    if (newShow)
-                    {
-                        EditorGUI.indentLevel++;
-
-                        //show axes
-                        for (int a = 0; a < Controls.MaxJoystickAxes; a++)
+                        bool newShow = EditorGUILayout.Foldout(show[j], Controls.Controllers[j].Name);
+                        if (newShow != show[j])
                         {
-                            string axisName = Controls.GetAxisName(j, a);
-                            float value = Input.GetAxisRaw(axisName);
-                            if (value != 0)
-                            {
-                                EditorGUILayout.LabelField(axisName + ": " + value, EditorStyles.miniLabel);
-                            }
-                            else
-                            {
-                                EditorGUILayout.LabelField(axisName + ": ", EditorStyles.miniLabel);
-                            }
+                            show[j] = newShow;
                         }
 
-                        //show buttons
-                        for (int b = 0; b < Controls.MaxJoystickButtons; b++)
+                        if (newShow)
                         {
-                            string buttonName = Controls.GetButtonName(j, b);
-                            bool value = Input.GetKey(buttonName);
-                            if (!value)
+                            EditorGUI.indentLevel++;
                             {
-                                EditorGUILayout.LabelField(buttonName + ": ", EditorStyles.miniLabel);
+                                //show axes
+                                for (int a = 0; a < Controls.MaxJoystickAxes; a++)
+                                {
+                                    string axisName = Controls.GetAxisName(j, a);
+                                    float value = Input.GetAxisRaw(axisName);
+                                    if (value != 0)
+                                    {
+                                        EditorGUILayout.LabelField(axisName + ": " + value, EditorStyles.miniLabel);
+                                    }
+                                    else
+                                    {
+                                        EditorGUILayout.LabelField(axisName + ": ", EditorStyles.miniLabel);
+                                    }
+                                }
+
+                                //show buttons
+                                for (int b = 0; b < Controls.MaxJoystickButtons; b++)
+                                {
+                                    string buttonName = Controls.GetButtonName(j, b);
+                                    bool value = Input.GetKey(buttonName);
+                                    if (!value)
+                                    {
+                                        EditorGUILayout.LabelField(buttonName + ": ", EditorStyles.miniLabel);
+                                    }
+                                    else
+                                    {
+                                        EditorGUILayout.LabelField(buttonName + ": Pressed", EditorStyles.miniLabel);
+                                    }
+                                }
                             }
-                            else
-                            {
-                                EditorGUILayout.LabelField(buttonName + ": Pressed", EditorStyles.miniLabel);
-                            }
+                            EditorGUI.indentLevel--;
                         }
-                        EditorGUI.indentLevel--;
                     }
                 }
+
                 EditorGUI.indentLevel--;
+                EditorPrefs.SetString(ShowKey, string.Join(",", show));
             }
             else
             {
@@ -139,6 +154,26 @@ namespace Popcron.Input
                 {
                     hasControllers = true;
                     break;
+                }
+            }
+
+            //no default controller
+            if (!manager.DefaultController)
+            {
+                EditorGUILayout.HelpBox("No default controller is present.", MessageType.Error);
+
+                //create a new controller
+                if (GUILayout.Button("Create default controller"))
+                {
+                    ControllerType controller = CreateInstance<ControllerType>();
+                    controller.name = "Default controller";
+
+                    string path = Path.Combine("Assets", "Default controller.asset");
+                    AssetDatabase.CreateAsset(controller, path);
+
+                    manager.DefaultController = controller;
+                    EditorUtility.SetDirty(manager);
+
                 }
             }
 
