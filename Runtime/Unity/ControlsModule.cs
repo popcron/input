@@ -13,6 +13,9 @@ namespace Popcron.Input
         [Header("Buttons")]
         [SerializeField]
         private bool m_canProcessControls = true;
+        
+        [SerializeField]
+        private bool m_disableMouse = false;
 
         [SerializeField]
         private string m_Left = "Left";
@@ -44,8 +47,13 @@ namespace Popcron.Input
             shouldActivate |= Controls.GetButtonDown(cancelButton);
             //shouldActivate |= !Mathf.Approximately(Input.GetAxisRaw(horizontalAxis), 0.0f);
             //shouldActivate |= !Mathf.Approximately(Input.GetAxisRaw(verticalAxis), 0.0f);
-            shouldActivate |= (mm_MousePosition - mm_LastMousePosition).sqrMagnitude > 0.0f;
-            shouldActivate |= Input.GetMouseButtonDown(0);
+            
+            if (!m_disableMouse)
+            {
+                shouldActivate |= (mm_MousePosition - mm_LastMousePosition).sqrMagnitude > 0.0f;
+                shouldActivate |= Input.GetMouseButtonDown(0);
+            }
+            
             return shouldActivate;
         }
 
@@ -65,7 +73,7 @@ namespace Popcron.Input
                 }
             }
 
-            ProcessMouseEvent();
+            if (!m_disableMouse) ProcessMouseEvent();
         }
 
         /// <summary>
