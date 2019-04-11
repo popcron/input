@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -11,21 +11,11 @@ namespace Popcron.Input
     [CustomEditor(typeof(ControlsManager))]
     public class ControlsManagerInspector : Editor
     {
-        private const string ShowKey = "Popcron.Input.ShowControllers";
-
         private ControlsManager manager;
-        private List<bool> show = new List<bool>();
 
         private void OnEnable()
         {
             manager = target as ControlsManager;
-
-            string[] data = EditorPrefs.GetString(ShowKey).Split(',');
-            show.Clear();
-            foreach (string element in data)
-            {
-                show.Add(element == "true");
-            }
         }
 
         public override bool RequiresConstantRepaint()
@@ -39,88 +29,51 @@ namespace Popcron.Input
 
             if (Application.isPlaying)
             {
-                //resize the show list if the controller count changed
-                if (Controls.Controllers.Count == 0)
-                {
-                    if (show.Count != 0)
-                    {
-                        show.Clear();
-                        EditorPrefs.SetString(ShowKey, "");
-                    }
-                }
-                else
-                {
-                    if (show.Count != Controls.Controllers.Count)
-                    {
-                        if (show.Count > Controls.Controllers.Count)
-                        {
-                            while (show.Count > Controls.Controllers.Count)
-                            {
-                                show.Add(true);
-                            }
-                        }
-                        else
-                        {
-                            while (show.Count < Controls.Controllers.Count)
-                            {
-                                show.Add(false);
-                            }
-                        }
-                    }
-                }
 
                 EditorGUILayout.LabelField("Connected Controllers: ");
                 EditorGUI.indentLevel++;
                 {
                     for (int j = 0; j < Controls.Controllers.Count; j++)
                     {
-                        bool newShow = EditorGUILayout.Foldout(show[j], Controls.Controllers[j].Name);
-                        if (newShow != show[j])
+                        int joyStick = Controls.Controllers[j].JoyStick;
+                        EditorGUILayout.LabelField(Controls.Controllers[j].Name);
+                        EditorGUI.indentLevel++;
                         {
-                            show[j] = newShow;
-                        }
-
-                        if (newShow)
-                        {
-                            EditorGUI.indentLevel++;
+                            //show axes
+                            for (int a = 0; a < Controls.MaxJoystickAxes; a++)
                             {
-                                //show axes
-                                for (int a = 0; a < Controls.MaxJoystickAxes; a++)
+                                string axisName = Controls.GetAxisName(joyStick, a);
+                                float value = Input.GetAxisRaw(axisName);
+                                if (value != 0)
                                 {
-                                    string axisName = Controls.GetAxisName(j, a);
-                                    float value = Input.GetAxisRaw(axisName);
-                                    if (value != 0)
-                                    {
-                                        EditorGUILayout.LabelField(axisName + ": " + value, EditorStyles.miniLabel);
-                                    }
-                                    else
-                                    {
-                                        EditorGUILayout.LabelField(axisName + ": ", EditorStyles.miniLabel);
-                                    }
+                                    EditorGUILayout.LabelField(axisName + ": " + value, EditorStyles.miniLabel);
                                 }
-
-                                //show buttons
-                                for (int b = 0; b < Controls.MaxJoystickButtons; b++)
+                                else
                                 {
-                                    string buttonName = Controls.GetButtonName(j, b);
-                                    bool value = Input.GetKey(buttonName);
-                                    if (!value)
-                                    {
-                                        EditorGUILayout.LabelField(buttonName + ": ", EditorStyles.miniLabel);
-                                    }
-                                    else
-                                    {
-                                        EditorGUILayout.LabelField(buttonName + ": Pressed", EditorStyles.miniLabel);
-                                    }
+                                    EditorGUILayout.LabelField(axisName + ": ", EditorStyles.miniLabel);
                                 }
                             }
-                            EditorGUI.indentLevel--;
+
+                            //show buttons
+                            for (int b = 0; b < Controls.MaxJoystickButtons; b++)
+                            {
+                                string buttonName = Controls.GetButtonName(j, b);
+                                bool value = Input.GetKey(buttonName);
+                                if (!value)
+                                {
+                                    EditorGUILayout.LabelField(buttonName + ": ", EditorStyles.miniLabel);
+                                }
+                                else
+                                {
+                                    EditorGUILayout.LabelField(buttonName + ": Pressed", EditorStyles.miniLabel);
+                                }
+                            }
                         }
+                        EditorGUI.indentLevel--;
                     }
                 }
 
                 EditorGUI.indentLevel--;
-                EditorPrefs.SetString(ShowKey, string.Join(",", show));
             }
             else
             {
