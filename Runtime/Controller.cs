@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -19,13 +19,9 @@ namespace Popcron.Input
         private List<string> pressedAxes = new List<string>();
         private List<string> releasedAxes = new List<string>();
 
-        public string Name
-        {
-            get
-            {
-                return type.controllerName;
-            }
-        }
+        public int JoyStick => joyStick;
+        public string Name => type.controllerName;
+        public ControllerType Type => type;
 
         public Controller(ControllerType type, int joyStick)
         {
