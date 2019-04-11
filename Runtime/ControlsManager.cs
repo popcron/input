@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +25,7 @@ namespace Popcron.Input
         private string[] joysticks;
 
         private List<Controller> controllers = new List<Controller>();
-        private float[] lastAxis = new float[5 * 28];
+        private float[] lastAxis = new float[6 * 30];
 
         /// <summary>
         /// The current input map being used
@@ -99,13 +99,14 @@ namespace Popcron.Input
 
         private ControllerType GetController(string joystickName)
         {
+            if (string.IsNullOrEmpty(joystickName)) return null;
+
+            string b = joystickName.ToLower().Replace(" ", "");
             for (int i = 0; i < allControllers.Count; i++)
             {
                 if (allControllers[i] == defaultController) continue;
 
                 string a = allControllers[i].controllerName.ToLower().Replace(" ", "");
-                string b = joystickName.ToLower().Replace(" ", "");
-
                 if (a.Equals(b))
                 {
                     return allControllers[i];
@@ -125,69 +126,106 @@ namespace Popcron.Input
                 //load controllers
                 controllers.Clear();
                 int index = 0;
+                int joyStick = 0;
                 for (int j = 0; j < joysticks.Length; j++)
                 {
                     ControllerType type = GetController(joysticks[j]);
-                    if (type == null)
+                    if (type != null)
                     {
-                        type = defaultController;
-                    }
+                        Controller controller = new Controller(type, j);
+                        controllers.Add(controller);
+                        joyStick++;
 
-                    Controller controller = new Controller(type, j);
-                    controllers.Add(controller);
-
-                    for (int b = 0; b < type.buttons.Count; b++)
-                    {
-                        ControllerBind bind = type.buttons[b];
-                        if (!bind.isKey)
+                        for (int b = 0; b < type.buttons.Count; b++)
                         {
-                            string axisName = Controls.GetAxisName(j, bind.axisNumber);
-                            float axisValue = Input.GetAxisRaw(axisName);
-                            if (axisValue != lastAxis[index])
+                            ControllerBind bind = type.buttons[b];
+                            if (!bind.isKey)
                             {
-                                if (Mathf.Abs(axisValue) < 0.2f)
+                                string axisName = Controls.GetAxisName(controller.JoyStick, bind.axisNumber);
+                                float axisValue = Input.GetAxisRaw(axisName);
+                                if (axisValue != lastAxis[index])
                                 {
-                                    controller.ReleaseAxis(axisName);
-                                }
-                                else
-                                {
-                                    if (bind.axisDirection == ControllerAxisDirection.Both)
+                                    if (Mathf.Abs(axisValue) < 0.2f)
                                     {
-                                        if (Mathf.Abs(axisValue) > 0.2f)
+                                        controller.ReleaseAxis(axisName);
+                                    }
+                                    else
+                                    {
+                                        if (bind.axisDirection == ControllerAxisDirection.Both)
                                         {
-                                            axisName += ".Both";
-                                            controller.PressAxis(axisName);
+                                            if (Mathf.Abs(axisValue) > 0.2f)
+                                            {
+                                                axisName += ".Both";
+                                                controller.PressAxis(axisName);
+                                            }
+                                        }
+                                        else if (bind.axisDirection == ControllerAxisDirection.Negative)
+                                        {
+                                            if (axisValue < -0.2f)
+                                            {
+                                                axisName += ".Negative";
+                                                controller.PressAxis(axisName);
+                                            }
+                                        }
+                                        else if (bind.axisDirection == ControllerAxisDirection.Positive)
+                                        {
+                                            if (axisValue > 0.2f)
+                                            {
+                                                axisName += ".Positive";
+                                                controller.PressAxis(axisName);
+                                            }
                                         }
                                     }
-                                    else if (bind.axisDirection == ControllerAxisDirection.Negative)
-                                    {
-                                        if (axisValue < -0.2f)
-                                        {
-                                            axisName += ".Negative";
-                                            controller.PressAxis(axisName);
-                                        }
-                                    }
-                                    else if (bind.axisDirection == ControllerAxisDirection.Positive)
-                                    {
-                                        if (axisValue > 0.2f)
-                                        {
-                                            axisName += ".Positive";
-                                            controller.PressAxis(axisName);
-                                        }
-                                    }
-                                }
 
-                                lastAxis[index] = axisValue;
+                                    lastAxis[index] = axisValue;
+                                    index++;
+                                }
                             }
                         }
-                        index++;
                     }
+                }
+
+                //if no controllers, add default
+                if (controllers.Count == 0)
+                {
+                    Controller controller = new Controller(defaultController, 0);
+                    controllers.Add(controller);
                 }
             }
             else
             {
                 controllers.Clear();
             }
+        }
+
+        private static List<Controller> GetControllers(int joyStick)
+        {
+            if (joyStick == -1)
+            {
+                return instance.controllers;
+            }
+
+            List<Controller> c = new List<Controller>();
+            List<Controller> defaults = new List<Controller>();
+            foreach (Controller controller in instance.controllers)
+            {
+                if (controller.JoyStick == joyStick)
+                {
+                    if (controller.Type == instance.defaultController)
+                    {
+                        defaults.Add(controller);
+                    }
+                    else
+                    {
+                        c.Add(controller);
+                    }
+                }
+            }
+
+            //add default controllers as last
+            c.AddRange(defaults);
+
+            return c;
         }
 
         public static bool GetButton(string name, int joyStick)
@@ -201,13 +239,13 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
-            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            if (joyStick < 0 || joyStick >= Controls.MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            Controller controller = instance.controllers[joyStick];
+            var controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
                 //controller check
@@ -240,13 +278,13 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
-            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            if (joyStick < 0 || joyStick >= Controls.MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            Controller controller = instance.controllers[joyStick];
+            var controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
                 //controller check
@@ -279,13 +317,13 @@ namespace Popcron.Input
             }
 
             if (instance.controllers.Count == 0) return false;
-            if (joyStick == -1 || joyStick >= Controls.MaxControllers)
+            if (joyStick < 0 || joyStick >= Controls.MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            Controller controller = instance.controllers[joyStick];
+            var controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
                 //controller check
