@@ -94,7 +94,10 @@ public class EditorHotkeyIntercepts
         if (vkcode == 27) return KeyCode.Escape;
 
         if (vkcode == 32) return KeyCode.Space;
-
+        if (vkcode == 33) return KeyCode.PageUp;
+        if (vkcode == 34) return KeyCode.PageDown;
+        if (vkcode == 35) return KeyCode.End;
+        if (vkcode == 36) return KeyCode.Home;
         if (vkcode == 37) return KeyCode.LeftArrow;
         if (vkcode == 38) return KeyCode.UpArrow;
         if (vkcode == 39) return KeyCode.RightArrow;

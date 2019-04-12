@@ -23,6 +23,26 @@ namespace Popcron.Input
         }
 
         /// <summary>
+        /// Returns whether a bind is a keyboard bind
+        /// </summary>
+        /// <param name="bind"></param>
+        /// <returns></returns>
+        public static bool IsKeyboard(string bind)
+        {
+            string type = GetBindType(bind);
+            if (type.IndexOf("keyboard") != -1) return true;
+            if (type.IndexOf("number button") != -1) return true;
+            if (type.IndexOf("number button") != -1) return true;
+            if (type.IndexOf("mouse button") != -1) return true;
+            if (type.IndexOf("modifier") != -1) return true;
+            if (type.IndexOf("special") != -1) return true;
+            if (type.IndexOf("arrow key") != -1) return true;
+            if (type.IndexOf("function key") != -1) return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Returns the type of bind (keyboard, controller, mouse, etc)
         /// </summary>
         /// <param name="bind"></param>
@@ -169,7 +189,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return Vector2.zero;
 
-            return Controllers[joyStick].GetLeftThumb();
+            return Controllers[joyStick].LeftThumb;
         }
 
         public static Vector2 GetRightThumb(int joyStick = 0)
@@ -180,7 +200,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return Vector2.zero;
 
-            return Controllers[joyStick].GetRightThumb();
+            return Controllers[joyStick].RightThumb;
         }
 
         public static bool GetLeftThumbDown(int joyStick = 0)
@@ -191,7 +211,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetLeftThumbDown();
+            return Controllers[joyStick].LeftThumbDown;
         }
 
         public static bool GetRightThumbDown(int joyStick = 0)
@@ -202,7 +222,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetRightThumbDown();
+            return Controllers[joyStick].RightThumbDown;
         }
 
         public static bool GetStart(int joyStick = 0)
@@ -213,7 +233,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetStart();
+            return Controllers[joyStick].Start;
         }
 
         public static bool GetSelect(int joyStick = 0)
@@ -224,7 +244,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetSelect();
+            return Controllers[joyStick].Select;
         }
 
         public static bool GetLeftBumper(int joyStick = 0)
@@ -235,7 +255,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetLeftBumper();
+            return Controllers[joyStick].LeftBumper;
         }
 
         public static bool GetRightBumper(int joyStick = 0)
@@ -246,7 +266,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return false;
 
-            return Controllers[joyStick].GetRightBumper();
+            return Controllers[joyStick].RightBumper;
         }
 
         public static float GetLeftTrigger(int joyStick = 0)
@@ -257,7 +277,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return 0f;
 
-            return Controllers[joyStick].GetLeftTrigger();
+            return Controllers[joyStick].LeftTrigger;
         }
 
         public static float GetRightTrigger(int joyStick = 0)
@@ -268,7 +288,7 @@ namespace Popcron.Input
             }
             if (Controllers.Count <= joyStick) return 0f;
 
-            return Controllers[joyStick].GetRightTrigger();
+            return Controllers[joyStick].RightTrigger;
         }
 
         public static bool GetButton(string name, int joyStick = 0)

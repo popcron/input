@@ -81,7 +81,7 @@ namespace Popcron.Input
             }
 
             //check if map is present
-            if (!manager.Map)
+            if (!manager.map)
             {
                 EditorGUILayout.HelpBox("No input Map being used.", MessageType.Error);
 
@@ -94,7 +94,7 @@ namespace Popcron.Input
                     string path = Path.Combine("Assets", "New input map.asset");
                     AssetDatabase.CreateAsset(map, path);
 
-                    manager.Map = map;
+                    manager.map = map;
                     EditorUtility.SetDirty(manager);
                     EditorGUIUtility.PingObject(map);
                 }
@@ -111,7 +111,7 @@ namespace Popcron.Input
             }
 
             //no default controller
-            if (!manager.DefaultController)
+            if (!manager.defaultController)
             {
                 EditorGUILayout.HelpBox("No default controller is present.", MessageType.Error);
 
@@ -124,7 +124,7 @@ namespace Popcron.Input
                     string path = Path.Combine("Assets", "Default controller.asset");
                     AssetDatabase.CreateAsset(controller, path);
 
-                    manager.DefaultController = controller;
+                    manager.defaultController = controller;
                     EditorUtility.SetDirty(manager);
 
                 }

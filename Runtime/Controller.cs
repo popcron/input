@@ -11,183 +11,175 @@ namespace Popcron.Input
     public class Controller
     {
         [SerializeField]
-        private ControllerType type;
+        private ControllerType _type;
 
         [SerializeField]
-        private int joyStick;
+        private int _joyStick;
 
         private List<string> pressedAxes = new List<string>();
         private List<string> releasedAxes = new List<string>();
 
-        public int JoyStick => joyStick;
-        public string Name => type.controllerName;
-        public ControllerType Type => type;
+        public int JoyStick => _joyStick;
+        public string Name => _type.controllerName;
+        public ControllerType Type => _type;
 
         public Controller(ControllerType type, int joyStick)
         {
-            this.type = type;
-            this.joyStick = joyStick;
+            this._type = type;
+            this._joyStick = joyStick;
         }
 
-        public Vector2 GetLeftThumb()
+        public Vector2 LeftThumb
         {
-            string horizontalAxisName = Controls.GetAxisName(joyStick, type.leftThumb.horizontalAxis);
-            string verticalAxisName = Controls.GetAxisName(joyStick, type.leftThumb.verticalAxis);
-
-            float horizontal = Input.GetAxisRaw(horizontalAxisName);
-            float vertical = Input.GetAxisRaw(verticalAxisName);
-
-            return new Vector2(horizontal * (type.leftThumb.invertHorizontal ? -1f : 1f), vertical * (type.leftThumb.invertVertical ? -1f : 1f));
-        }
-
-        public Vector2 GetRightThumb()
-        {
-            string horizontalAxisName = Controls.GetAxisName(joyStick, type.rightThumb.horizontalAxis);
-            string verticalAxisName = Controls.GetAxisName(joyStick, type.rightThumb.verticalAxis);
-
-            float horizontal = Input.GetAxisRaw(horizontalAxisName);
-            float vertical = Input.GetAxisRaw(verticalAxisName);
-
-            return new Vector2(horizontal * (type.rightThumb.invertHorizontal ? -1f : 1f), vertical * (type.rightThumb.invertVertical ? -1f : 1f));
-        }
-
-        public bool GetLeftThumbDown()
-        {
-            if (!type.leftThumb.button.isKey)
+            get
             {
-                return type.leftThumb.button.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.leftThumb.button.buttonNumber);
-                return Input.GetKey(buttonName);
+                string horizontalAxisName = Controls.GetAxisName(JoyStick, Type.leftThumb.horizontalAxis);
+                string verticalAxisName = Controls.GetAxisName(JoyStick, Type.leftThumb.verticalAxis);
+
+                float horizontal = Input.GetAxisRaw(horizontalAxisName);
+                float vertical = Input.GetAxisRaw(verticalAxisName);
+
+                return new Vector2(horizontal * (Type.leftThumb.invertHorizontal ? -1f : 1f), vertical * (Type.leftThumb.invertVertical ? -1f : 1f));
             }
         }
 
-        public bool GetRightThumbDown()
+        public Vector2 RightThumb
         {
-            if (!type.rightThumb.button.isKey)
+            get
             {
-                return type.rightThumb.button.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.rightThumb.button.buttonNumber);
-                return Input.GetKey(buttonName);
+                string horizontalAxisName = Controls.GetAxisName(JoyStick, Type.rightThumb.horizontalAxis);
+                string verticalAxisName = Controls.GetAxisName(JoyStick, Type.rightThumb.verticalAxis);
+
+                float horizontal = Input.GetAxisRaw(horizontalAxisName);
+                float vertical = Input.GetAxisRaw(verticalAxisName);
+
+                return new Vector2(horizontal * (Type.rightThumb.invertHorizontal ? -1f : 1f), vertical * (Type.rightThumb.invertVertical ? -1f : 1f));
             }
         }
 
-        public bool GetStart()
+        public bool LeftThumbDown
         {
-            if (!type.start.isKey)
+            get
             {
-                return type.start.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.start.buttonNumber);
-                return Input.GetKey(buttonName);
+                if (!Type.leftThumb.button.isKey)
+                {
+                    return Type.leftThumb.button.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.leftThumb.button.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
             }
         }
 
-        public bool GetSelect()
+        public bool RightThumbDown
         {
-            if (!type.select.isKey)
+            get
             {
-                return type.select.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.select.buttonNumber);
-                return Input.GetKey(buttonName);
+                if (!Type.rightThumb.button.isKey)
+                {
+                    return Type.rightThumb.button.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.rightThumb.button.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
             }
         }
 
-        public bool GetLeftBumper()
+        public bool Start
         {
-            if (!type.leftBumper.isKey)
+            get
             {
-                return type.leftBumper.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.leftBumper.buttonNumber);
-                return Input.GetKey(buttonName);
-            }
-        }
-
-        public bool GetRightBumper()
-        {
-            if (!type.rightBumper.isKey)
-            {
-                return type.rightBumper.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, type.rightBumper.buttonNumber);
-                return Input.GetKey(buttonName);
+                if (!Type.start.isKey)
+                {
+                    return Type.start.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.start.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
             }
         }
 
-        public float GetLeftTrigger()
+        public bool Select
         {
-            string axisName = Controls.GetAxisName(joyStick, type.leftTriggerAxis);
-            return Input.GetAxisRaw(axisName);
+            get
+            {
+                if (!Type.select.isKey)
+                {
+                    return Type.select.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.select.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
+            }
         }
 
-        public float GetRightTrigger()
+        public bool LeftBumper
         {
-            string axisName = Controls.GetAxisName(joyStick, type.rightTriggerAxis);
-            return Input.GetAxisRaw(axisName);
+            get
+            {
+                if (!Type.leftBumper.isKey)
+                {
+                    return Type.leftBumper.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.leftBumper.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
+            }
+        }
+
+        public bool RightBumper
+        {
+            get
+            {
+                if (!Type.rightBumper.isKey)
+                {
+                    return Type.rightBumper.Evaluate(JoyStick);
+                }
+                else
+                {
+                    string buttonName = Controls.GetButtonName(JoyStick, Type.rightBumper.buttonNumber);
+                    return Input.GetKey(buttonName);
+                }
+            }
+        }
+
+        public float LeftTrigger
+        {
+            get
+            {
+                string axisName = Controls.GetAxisName(JoyStick, Type.leftTriggerAxis);
+                return Input.GetAxisRaw(axisName);
+            }
+        }
+
+        public float RightTrigger
+        {
+            get
+            {
+                string axisName = Controls.GetAxisName(JoyStick, Type.rightTriggerAxis);
+                return Input.GetAxisRaw(axisName);
+            }
         }
 
         public ControllerBind GetBind(string name)
         {
-            for (int i = 0; i < type.buttons.Count; i++)
-            {
-                if (type.buttons[i].name == name)
-                {
-                    return type.buttons[i];
-                }
-            }
-
-            if (name == "Left Bumper")
-            {
-                return type.leftBumper;
-            }
-            else if (name == "Right Bumper")
-            {
-                return type.rightBumper;
-            }
-            else if (name == "Start")
-            {
-                return type.start;
-            }
-            else if (name == "Select")
-            {
-                return type.select;
-            }
-
-            return null;
+            return Type.GetBind(name);
         }
 
         public bool GetButton(string name)
         {
             ControllerBind bind = GetBind(name);
-            if (bind == null)
-            {
-                return false;
-            }
-
-            if (!bind.isKey)
-            {
-                return bind.Evaluate(joyStick);
-            }
-            else
-            {
-                string buttonName = Controls.GetButtonName(joyStick, bind.buttonNumber);
-                return Input.GetKey(buttonName);
-            }
+            return Type.GetButton(bind, JoyStick);
         }
 
         public bool GetButtonDown(string name)
@@ -200,7 +192,7 @@ namespace Popcron.Input
 
             if (!bind.isKey)
             {
-                string axisName = Controls.GetAxisName(joyStick, bind.axisNumber);
+                string axisName = Controls.GetAxisName(JoyStick, bind.axisNumber);
                 for (int i = 0; i < pressedAxes.Count; i++)
                 {
                     if (pressedAxes[i] == axisName + "." + bind.axisDirection)
@@ -213,7 +205,7 @@ namespace Popcron.Input
             }
             else
             {
-                string buttonName = Controls.GetButtonName(joyStick, bind.buttonNumber);
+                string buttonName = Controls.GetButtonName(JoyStick, bind.buttonNumber);
                 return Input.GetKeyDown(buttonName);
             }
         }
@@ -228,7 +220,7 @@ namespace Popcron.Input
 
             if (!bind.isKey)
             {
-                string axisName = Controls.GetAxisName(joyStick, bind.axisNumber);
+                string axisName = Controls.GetAxisName(JoyStick, bind.axisNumber);
                 for (int i = 0; i < releasedAxes.Count; i++)
                 {
                     if (releasedAxes[i] == axisName)
@@ -241,7 +233,7 @@ namespace Popcron.Input
             }
             else
             {
-                string buttonName = Controls.GetButtonName(joyStick, bind.buttonNumber);
+                string buttonName = Controls.GetButtonName(JoyStick, bind.buttonNumber);
                 return Input.GetKeyUp(buttonName);
             }
         }
@@ -251,11 +243,11 @@ namespace Popcron.Input
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool Exists(string name)
+        public bool Contains(string name)
         {
-            for (int i = 0; i < type.buttons.Count; i++)
+            for (int i = 0; i < Type.buttons.Count; i++)
             {
-                if (type.buttons[i].name == name)
+                if (Type.buttons[i].name == name)
                 {
                     return true;
                 }

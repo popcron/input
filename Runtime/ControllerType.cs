@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Popcron.Input
 {
+    using Input = global::Input;
+
     [CreateAssetMenu(menuName = "Controls/Controller")]
     public class ControllerType : ScriptableObject
     {
@@ -30,5 +33,53 @@ namespace Popcron.Input
             new ControllerBind("Button X", KeyCode.JoystickButton2),
             new ControllerBind("Button Y", KeyCode.JoystickButton3)
         };
+
+        public bool GetButton(ControllerBind bind, int joyStick)
+        {
+            if (bind == null)
+            {
+                return false;
+            }
+
+            if (!bind.isKey)
+            {
+                return bind.Evaluate(joyStick);
+            }
+            else
+            {
+                string buttonName = Controls.GetButtonName(joyStick, bind.buttonNumber);
+                return Input.GetKey(buttonName);
+            }
+        }
+
+        public ControllerBind GetBind(string name)
+        {
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                if (buttons[i].name == name)
+                {
+                    return buttons[i];
+                }
+            }
+
+            if (name == "Left Bumper")
+            {
+                return leftBumper;
+            }
+            else if (name == "Right Bumper")
+            {
+                return rightBumper;
+            }
+            else if (name == "Start")
+            {
+                return start;
+            }
+            else if (name == "Select")
+            {
+                return select;
+            }
+
+            return null;
+        }
     }
 }

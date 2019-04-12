@@ -12,11 +12,8 @@ namespace Popcron.Input
     {
         private static ControlsManager instance;
 
-        [SerializeField]
-        private Map map;
-
-        [SerializeField]
-        private ControllerType defaultController;
+        public Map map;
+        public ControllerType defaultController;
 
         [SerializeField]
         private List<ControllerType> allControllers = new List<ControllerType>();
@@ -30,34 +27,13 @@ namespace Popcron.Input
         /// <summary>
         /// The current input map being used
         /// </summary>
-        public Map Map
-        {
-            get
-            {
-                return map;
-            }
-            set
-            {
-                map = value;
-            }
-        }
+        public static Map Map { get; private set; }
+        public static ControllerType DefaultController { get; private set; }
 
         /// <summary>
         /// List of all controllers available in the project
         /// </summary>
         public List<ControllerType> Controllers => allControllers;
-
-        public ControllerType DefaultController
-        {
-            get
-            {
-                return defaultController;
-            }
-            set
-            {
-                defaultController = value;
-            }
-        }
 
         private void Awake()
         {
@@ -94,6 +70,8 @@ namespace Popcron.Input
 
         private void OnEnable()
         {
+            Map = map;
+            DefaultController = defaultController;
             instance = this;
         }
 
@@ -118,6 +96,9 @@ namespace Popcron.Input
 
         private void Update()
         {
+            Map = map;
+            DefaultController = defaultController;
+
             //set static value
             Controls.Controllers = controllers;
             joysticks = Input.GetJoystickNames();
@@ -245,7 +226,7 @@ namespace Popcron.Input
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            var controller = instance.controllers[joyStick];
+            Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
                 //controller check
@@ -254,9 +235,10 @@ namespace Popcron.Input
                     return true;
                 }
 
-                //keyboard check
-                if (!controller.Exists(bind.binds[b]))
+                //for interference checking
+                if (!controller.Contains(bind.binds[b]))
                 {
+                    //keyboard check
                     if (Input.GetKey(bind.binds[b]))
                     {
                         return true;
@@ -284,17 +266,15 @@ namespace Popcron.Input
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            var controller = instance.controllers[joyStick];
+            Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
-                //controller check
                 if (controller.GetButtonDown(bind.binds[b]))
                 {
                     return true;
                 }
 
-                //keyboard check
-                if (!controller.Exists(bind.binds[b]))
+                if (!controller.Contains(bind.binds[b]))
                 {
                     if (Input.GetKeyDown(bind.binds[b]))
                     {
@@ -323,17 +303,15 @@ namespace Popcron.Input
             }
             if (instance.controllers.Count <= joyStick) return false;
 
-            var controller = instance.controllers[joyStick];
+            Controller controller = instance.controllers[joyStick];
             for (int b = 0; b < bind.binds.Count; b++)
             {
-                //controller check
                 if (controller.GetButtonUp(bind.binds[b]))
                 {
                     return true;
                 }
 
-                //keyboard check
-                if (!controller.Exists(bind.binds[b]))
+                if (!controller.Contains(bind.binds[b]))
                 {
                     if (Input.GetKeyUp(bind.binds[b]))
                     {
