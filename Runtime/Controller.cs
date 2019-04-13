@@ -20,13 +20,13 @@ namespace Popcron.Input
         private List<string> releasedAxes = new List<string>();
 
         public int JoyStick => _joyStick;
-        public string Name => _type.controllerName;
+        public string Name => _type.name;
         public ControllerType Type => _type;
 
         public Controller(ControllerType type, int joyStick)
         {
-            this._type = type;
-            this._joyStick = joyStick;
+            _type = type;
+            _joyStick = joyStick;
         }
 
         public Vector2 LeftThumb
@@ -61,15 +61,8 @@ namespace Popcron.Input
         {
             get
             {
-                if (!Type.leftThumb.button.isKey)
-                {
-                    return Type.leftThumb.button.Evaluate(JoyStick);
-                }
-                else
-                {
-                    string buttonName = Controls.GetButtonName(JoyStick, Type.leftThumb.button.buttonNumber);
-                    return Input.GetKey(buttonName);
-                }
+                string buttonName = Controls.GetButtonName(JoyStick, Type.leftThumb.buttonNumber);
+                return Input.GetKey(buttonName);
             }
         }
 
@@ -77,15 +70,8 @@ namespace Popcron.Input
         {
             get
             {
-                if (!Type.rightThumb.button.isKey)
-                {
-                    return Type.rightThumb.button.Evaluate(JoyStick);
-                }
-                else
-                {
-                    string buttonName = Controls.GetButtonName(JoyStick, Type.rightThumb.button.buttonNumber);
-                    return Input.GetKey(buttonName);
-                }
+                string buttonName = Controls.GetButtonName(JoyStick, Type.rightThumb.buttonNumber);
+                return Input.GetKey(buttonName);
             }
         }
 
@@ -93,15 +79,26 @@ namespace Popcron.Input
         {
             get
             {
-                if (!Type.start.isKey)
-                {
-                    return Type.start.Evaluate(JoyStick);
-                }
-                else
-                {
-                    string buttonName = Controls.GetButtonName(JoyStick, Type.start.buttonNumber);
-                    return Input.GetKey(buttonName);
-                }
+                string buttonName = Controls.GetButtonName(JoyStick, Type.startButton);
+                return Input.GetKey(buttonName);
+            }
+        }
+
+        public bool StartDown
+        {
+            get
+            {
+                string buttonName = Controls.GetButtonName(JoyStick, Type.startButton);
+                return Input.GetKeyDown(buttonName);
+            }
+        }
+
+        public bool StartUp
+        {
+            get
+            {
+                string buttonName = Controls.GetButtonName(JoyStick, Type.startButton);
+                return Input.GetKeyUp(buttonName);
             }
         }
 
@@ -109,15 +106,26 @@ namespace Popcron.Input
         {
             get
             {
-                if (!Type.select.isKey)
-                {
-                    return Type.select.Evaluate(JoyStick);
-                }
-                else
-                {
-                    string buttonName = Controls.GetButtonName(JoyStick, Type.select.buttonNumber);
-                    return Input.GetKey(buttonName);
-                }
+                string buttonName = Controls.GetButtonName(JoyStick, Type.selectButton);
+                return Input.GetKey(buttonName);
+            }
+        }
+
+        public bool SelectDown
+        {
+            get
+            {
+                string buttonName = Controls.GetButtonName(JoyStick, Type.selectButton);
+                return Input.GetKeyDown(buttonName);
+            }
+        }
+
+        public bool SelectUp
+        {
+            get
+            {
+                string buttonName = Controls.GetButtonName(JoyStick, Type.selectButton);
+                return Input.GetKeyUp(buttonName);
             }
         }
 

@@ -80,14 +80,18 @@ namespace Popcron.Input
             if (string.IsNullOrEmpty(joystickName)) return null;
 
             string b = joystickName.ToLower().Replace(" ", "");
-            for (int i = 0; i < allControllers.Count; i++)
+            foreach (ControllerType controller in allControllers)
             {
-                if (allControllers[i] == defaultController) continue;
+                if (!controller) continue;
+                if (controller == defaultController) continue;
 
-                string a = allControllers[i].controllerName.ToLower().Replace(" ", "");
-                if (a.Equals(b))
+                foreach (string name in controller.controllerNames)
                 {
-                    return allControllers[i];
+                    string a = name.ToLower().Replace(" ", "");
+                    if (a.Equals(b))
+                    {
+                        return controller;
+                    }
                 }
             }
 

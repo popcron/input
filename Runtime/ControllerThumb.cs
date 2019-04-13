@@ -6,26 +6,24 @@ namespace Popcron.Input
     [Serializable]
     public class ControllerThumb
     {
-        public ControllerBind button = new ControllerBind("Button", KeyCode.JoystickButton8);
-
+        public int buttonNumber;
         public int horizontalAxis;
         public int verticalAxis;
-
         public bool invertHorizontal;
         public bool invertVertical;
 
-        public ControllerThumb(KeyCode key, int horizontalAxis, int verticalAxis)
+        public ControllerThumb(int buttonNumber, int horizontalAxis, int verticalAxis)
         {
-            this.button = new ControllerBind("Button", key);
+            this.buttonNumber = buttonNumber;
             this.horizontalAxis = horizontalAxis;
             this.verticalAxis = verticalAxis;
             this.invertHorizontal = false;
             this.invertVertical = false;
         }
 
-        public ControllerThumb(KeyCode key, int horizontalAxis, int verticalAxis, bool invertHorizontal, bool invertVertical)
+        public ControllerThumb(int buttonNumber, int horizontalAxis, int verticalAxis, bool invertHorizontal, bool invertVertical)
         {
-            this.button = new ControllerBind("Button", key);
+            this.buttonNumber = buttonNumber;
             this.horizontalAxis = horizontalAxis;
             this.verticalAxis = verticalAxis;
             this.invertHorizontal = invertHorizontal;

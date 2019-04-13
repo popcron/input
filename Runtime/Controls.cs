@@ -203,7 +203,7 @@ namespace Popcron.Input
             return Controllers[joyStick].RightThumb;
         }
 
-        public static bool GetLeftThumbDown(int joyStick = 0)
+        public static bool GetLeftThumbButton(int joyStick = 0)
         {
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
@@ -236,6 +236,28 @@ namespace Popcron.Input
             return Controllers[joyStick].Start;
         }
 
+        public static bool GetStartDown(int joyStick = 0)
+        {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
+            return Controllers[joyStick].StartDown;
+        }
+
+        public static bool GetStartUp(int joyStick = 0)
+        {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
+            return Controllers[joyStick].StartUp;
+        }
+
         public static bool GetSelect(int joyStick = 0)
         {
             if (joyStick == -1 || joyStick >= MaxControllers)
@@ -245,6 +267,28 @@ namespace Popcron.Input
             if (Controllers.Count <= joyStick) return false;
 
             return Controllers[joyStick].Select;
+        }
+
+        public static bool GetSelectDown(int joyStick = 0)
+        {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
+            return Controllers[joyStick].SelectDown;
+        }
+
+        public static bool GetSelectUp(int joyStick = 0)
+        {
+            if (joyStick == -1 || joyStick >= MaxControllers)
+            {
+                throw new Exception("JoyStick number " + joyStick + " is out of range.");
+            }
+            if (Controllers.Count <= joyStick) return false;
+
+            return Controllers[joyStick].SelectUp;
         }
 
         public static bool GetLeftBumper(int joyStick = 0)
