@@ -169,17 +169,17 @@ namespace Popcron.Input
                         }
                     }
                 }
-
-                //if no controllers, add default
-                if (controllers.Count == 0)
-                {
-                    Controller controller = new Controller(defaultController, 0);
-                    controllers.Add(controller);
-                }
             }
             else
             {
                 controllers.Clear();
+            }
+            
+            //if no controllers, add default
+            if (controllers.Count == 0)
+            {
+                Controller controller = new Controller(defaultController, 0);
+                controllers.Add(controller);
             }
         }
 
