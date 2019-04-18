@@ -2,6 +2,6 @@
     "name": "com.popcron.input",
     "displayName": "Popcron Input",
     "version": "0.9.1",
-    "unity": "2018.3.0f2",
+    "unity": "2018.3.0",
     "description": "A simple wrapper for Unity's built in input manager."
 }
