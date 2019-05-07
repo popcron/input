@@ -207,6 +207,8 @@ public class EditorHotkeyIntercepts
 
         Debug.LogWarning("Converter for Virtual Key Code " + vkcode + " not implemented.");
         //consult http://cherrytree.at/misc/vk.htm for the vkcode table
+        
+        return KeyCode.None;
     }
 
     private static async void Pressed(int vkcode)
