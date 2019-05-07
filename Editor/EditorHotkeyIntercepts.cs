@@ -45,7 +45,8 @@ public class EditorHotkeyIntercepts
     {
         if (nCode >= 0)
         {
-            if (ApplicationIsActivated)
+            string windowOpen = EditorWindow.focusedWindow?.ToString(); 
+            if (windowOpen.IndexOf("UnityEditor.GameView") != -1 && ApplicationIsActivated)
             {
                 int vkcode = Marshal.ReadInt32(lParam);
                 if (wParam == (IntPtr)WM_KEYDOWN)
