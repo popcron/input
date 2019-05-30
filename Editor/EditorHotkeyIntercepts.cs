@@ -45,7 +45,8 @@ public class EditorHotkeyIntercepts
     {
         if (nCode >= 0)
         {
-            if (ApplicationIsActivated)
+            string windowOpen = EditorWindow.focusedWindow != null ? EditorWindow.focusedWindow.ToString() : ""; 
+            if (windowOpen.IndexOf("UnityEditor.GameView") != -1 && ApplicationIsActivated)
             {
                 int vkcode = Marshal.ReadInt32(lParam);
                 if (wParam == (IntPtr)WM_KEYDOWN)
@@ -90,6 +91,7 @@ public class EditorHotkeyIntercepts
         if (vkcode == 8) return KeyCode.Backspace;
         if (vkcode == 9) return KeyCode.Tab;
         if (vkcode == 13) return KeyCode.Return;
+        if (vkcode == 19) return KeyCode.Pause;
         if (vkcode == 20) return KeyCode.CapsLock;
         if (vkcode == 27) return KeyCode.Escape;
 
@@ -102,6 +104,7 @@ public class EditorHotkeyIntercepts
         if (vkcode == 38) return KeyCode.UpArrow;
         if (vkcode == 39) return KeyCode.RightArrow;
         if (vkcode == 40) return KeyCode.DownArrow;
+        if (vkcode == 44) return KeyCode.Print;
         if (vkcode == 45) return KeyCode.Insert;
         if (vkcode == 46) return KeyCode.Delete;
         if (vkcode == 47) return KeyCode.Help;
@@ -157,7 +160,12 @@ public class EditorHotkeyIntercepts
         if (vkcode == 103) return KeyCode.Keypad7;
         if (vkcode == 104) return KeyCode.Keypad8;
         if (vkcode == 105) return KeyCode.Keypad9;
-
+        if (vkcode == 106) return KeyCode.KeypadMultiply;
+        if (vkcode == 107) return KeyCode.KeypadPlus;
+        //if (vkcode == 108) return KeyCode.KeypadSeparator; vk #6C
+        if (vkcode == 109) return KeyCode.KeypadMinus;
+        if (vkcode == 110) return KeyCode.KeypadPeriod;
+        if (vkcode == 111) return KeyCode.KeypadDivide;
         if (vkcode == 112) return KeyCode.F1;
         if (vkcode == 113) return KeyCode.F2;
         if (vkcode == 114) return KeyCode.F3;
@@ -197,8 +205,10 @@ public class EditorHotkeyIntercepts
         if (vkcode == 221) return KeyCode.RightBracket;
         if (vkcode == 222) return KeyCode.Quote;
 
-        throw new Exception("Converter for Virtual Key Code " + vkcode + " not implemented.");
+        Debug.LogWarning("Converter for Virtual Key Code " + vkcode + " not implemented.");
         //consult http://cherrytree.at/misc/vk.htm for the vkcode table
+        
+        return KeyCode.None;
     }
 
     private static async void Pressed(int vkcode)
