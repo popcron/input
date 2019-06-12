@@ -11,6 +11,11 @@ namespace Popcron.Input
         /// </summary>
         public static List<Controller> Controllers { get; set; } = new List<Controller>();
         public static List<ControllerType> Types { get; set; } = new List<ControllerType>();
+		
+		/// <summary>
+		/// Disable or enable input commands
+		/// <summary>
+		public static bool Enabled { get; set; } = true;
 
         public static string GetAxisName(int joyStick, int axisNumber)
         {
@@ -183,6 +188,8 @@ namespace Popcron.Input
 
         public static Vector2 GetLeftThumb(int joyStick = 0)
         {
+			if (!Enabled) return Vector2.zero;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -194,6 +201,8 @@ namespace Popcron.Input
 
         public static Vector2 GetRightThumb(int joyStick = 0)
         {
+			if (!Enabled) return Vector2.zero;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -205,6 +214,8 @@ namespace Popcron.Input
 
         public static bool GetLeftThumbButton(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -216,6 +227,8 @@ namespace Popcron.Input
 
         public static bool GetRightThumbDown(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -227,6 +240,8 @@ namespace Popcron.Input
 
         public static bool GetStart(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -238,6 +253,8 @@ namespace Popcron.Input
 
         public static bool GetStartDown(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -249,6 +266,8 @@ namespace Popcron.Input
 
         public static bool GetStartUp(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -260,6 +279,8 @@ namespace Popcron.Input
 
         public static bool GetSelect(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -271,6 +292,8 @@ namespace Popcron.Input
 
         public static bool GetSelectDown(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -282,6 +305,8 @@ namespace Popcron.Input
 
         public static bool GetSelectUp(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -293,6 +318,8 @@ namespace Popcron.Input
 
         public static bool GetLeftBumper(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -304,6 +331,8 @@ namespace Popcron.Input
 
         public static bool GetRightBumper(int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -315,6 +344,8 @@ namespace Popcron.Input
 
         public static float GetLeftTrigger(int joyStick = 0)
         {
+			if (!Enabled) return 0f;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -326,6 +357,8 @@ namespace Popcron.Input
 
         public static float GetRightTrigger(int joyStick = 0)
         {
+			if (!Enabled) return 0f;
+			
             if (joyStick == -1 || joyStick >= MaxControllers)
             {
                 throw new Exception("JoyStick number " + joyStick + " is out of range.");
@@ -337,16 +370,22 @@ namespace Popcron.Input
 
         public static bool GetButton(string name, int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             return ControlsManager.GetButton(name, joyStick);
         }
 
         public static bool GetButtonDown(string name, int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             return ControlsManager.GetButtonDown(name, joyStick);
         }
 
         public static bool GetButtonUp(string name, int joyStick = 0)
         {
+			if (!Enabled) return false;
+			
             return ControlsManager.GetButtonUp(name, joyStick);
         }
     }
