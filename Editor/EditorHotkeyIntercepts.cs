@@ -21,13 +21,17 @@ public class EditorHotkeyIntercepts
 
     static EditorHotkeyIntercepts()
     {
-        string key = SystemInfo.deviceUniqueIdentifier + "." + PlayerSettings.productGUID + ".Interception.HookID";
-        IntPtr oldHookId = new IntPtr(EditorPrefs.GetInt(key));
-        UnhookWindowsHookEx(oldHookId);
+        int platform = (int)System.Environment.OSVersion.Platform;
+        if (platform != 4 && platform != 6 && platform != 128)
+		{
+			string key = SystemInfo.deviceUniqueIdentifier + "." + PlayerSettings.productGUID + ".Interception.HookID";
+			IntPtr oldHookId = new IntPtr(EditorPrefs.GetInt(key));
+			UnhookWindowsHookEx(oldHookId);
 
-        _hookID = SetHook(_proc);
-        EditorPrefs.SetInt(key, _hookID.ToInt32());
-    }
+			_hookID = SetHook(_proc);
+			EditorPrefs.SetInt(key, _hookID.ToInt32());
+		}
+	}
 
     private static IntPtr SetHook(LowLevelKeyboardProc proc)
     {

@@ -56,10 +56,13 @@ public class Input : UnityEngine.Input
 		if (!Enabled) return false;
 		
 #if UNITY_EDITOR
-        return keys.Contains(keyCode);
-#else
-        return UnityEngine.Input.GetKey(keyCode);
+		int platform = (int)System.Environment.OSVersion.Platform;
+        if (platform != 4 && platform != 6 && platform != 128)
+		{
+			return keys.Contains(keyCode);
+		}
 #endif
+		return UnityEngine.Input.GetKey(keyCode);
     }
 
     public static new bool GetKeyDown(KeyCode keyCode)
@@ -67,16 +70,21 @@ public class Input : UnityEngine.Input
 		if (!Enabled) return false;
 		
 #if UNITY_EDITOR
-        if (keysPressed.Contains(keyCode))
-        {
-            keysPressed.Remove(keyCode);
-            return true;
-        }
-
-        return false;
-#else
-        return UnityEngine.Input.GetKeyDown(keyCode);
+        int platform = (int)System.Environment.OSVersion.Platform;
+        if (platform != 4 && platform != 6 && platform != 128)
+		{
+			if (keysPressed.Contains(keyCode))
+			{
+				keysPressed.Remove(keyCode);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 #endif
+        return UnityEngine.Input.GetKeyDown(keyCode);
     }
 
     public static new bool GetKeyUp(KeyCode keyCode)
@@ -84,15 +92,20 @@ public class Input : UnityEngine.Input
 		if (!Enabled) return false;
 		
 #if UNITY_EDITOR
-        if (keysReleased.Contains(keyCode))
-        {
-            keysReleased.Remove(keyCode);
-            return true;
-        }
-
-        return false;
-#else
-        return UnityEngine.Input.GetKeyUp(keyCode);
+        int platform = (int)System.Environment.OSVersion.Platform;
+        if (platform != 4 && platform != 6 && platform != 128)
+		{
+			if (keysReleased.Contains(keyCode))
+			{
+				keysReleased.Remove(keyCode);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 #endif
+        return UnityEngine.Input.GetKeyUp(keyCode);
     }
 }
