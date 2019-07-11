@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -8,6 +7,7 @@ using Debug = UnityEngine.Debug;
 using Application = UnityEngine.Application;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEditor.Callbacks;
 
 [InitializeOnLoad]
 public class EditorHotkeyIntercepts
@@ -15,31 +15,122 @@ public class EditorHotkeyIntercepts
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
-    private static readonly LowLevelKeyboardProc _proc = HookCallback;
-    private static IntPtr _hookID = IntPtr.Zero;
+
+    private static readonly LowLevelKeyboardProc hookCallbackMethod = HookCallback;
+    private static IntPtr hookId = IntPtr.Zero;
     private static List<int> keysPressed = new List<int>();
+
+    private static string Key
+    {
+        get
+        {
+            string key = SystemInfo.deviceUniqueIdentifier + "." + PlayerSettings.productGUID + ".Interception.HookID";
+            return key;
+        }
+    }
 
     static EditorHotkeyIntercepts()
     {
-        int platform = (int)System.Environment.OSVersion.Platform;
-        if (platform != 4 && platform != 6 && platform != 128)
-		{
-			string key = SystemInfo.deviceUniqueIdentifier + "." + PlayerSettings.productGUID + ".Interception.HookID";
-			IntPtr oldHookId = new IntPtr(EditorPrefs.GetInt(key));
-			UnhookWindowsHookEx(oldHookId);
+        if (IsOnWindows)
+        {
+            EditorApplication.update += OnUpdate;
+        }
+    }
 
-			_hookID = SetHook(_proc);
-			EditorPrefs.SetInt(key, _hookID.ToInt32());
-		}
-	}
+    [DidReloadScripts]
+    private static void OnScriptsReloaded()
+    {
+        Initialize();
+    }
+
+    private static async void Initialize()
+    {
+        //wait until its not compiling
+        while (EditorApplication.isCompiling)
+        {
+            await Task.Delay(1);
+        }
+
+        int value = EditorPrefs.GetInt(Key, -1);
+        if (value != -1)
+        {
+            IntPtr oldHookId = new IntPtr(value);
+            UnhookWindowsHookEx(oldHookId);
+        }
+
+        hookId = SetHook(hookCallbackMethod);
+        EditorPrefs.SetInt(Key, hookId.ToInt32());
+    }
+
+    private static void OnUpdate()
+    {
+        //if the editor started compiling, unhook
+        if (EditorApplication.isCompiling)
+        {
+            if (hookId != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(hookId);
+                EditorPrefs.SetInt(Key, -1);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks if the unity editor is currently open.
+    /// </summary>
+    public static bool ApplicationIsActivated
+    {
+        get
+        {
+            IntPtr activatedHandle = GetForegroundWindow();
+            if (activatedHandle == IntPtr.Zero)
+            {
+                return false;       // No window is currently activated
+            }
+
+            int procId = Process.GetCurrentProcess().Id;
+            GetWindowThreadProcessId(activatedHandle, out int activeProcId);
+            return activeProcId == procId;
+        }
+    }
+
+    public static bool IsOnWindows
+    {
+        get
+        {
+            Version version = Environment.OSVersion.Version;
+            if (version.Major == 5)
+            {
+                if (version.Minor >= 0 && version.Minor <= 2)
+                {
+                    return true;
+                }
+            }
+            else if (version.Major == 6)
+            {
+                if (version.Minor >= 0 && version.Minor <= 3)
+                {
+                    return true;
+                }
+            }
+            else if (version.Major == 10)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     private static IntPtr SetHook(LowLevelKeyboardProc proc)
     {
         using (Process curProcess = Process.GetCurrentProcess())
-        using (ProcessModule curModule = curProcess.MainModule)
         {
-            IntPtr moduleHandle = GetModuleHandle(curModule.ModuleName);
-            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, moduleHandle, 0);
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                IntPtr moduleHandle = GetModuleHandle(curModule.ModuleName);
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, moduleHandle, 0);
+            }
         }
     }
 
@@ -49,7 +140,7 @@ public class EditorHotkeyIntercepts
     {
         if (nCode >= 0)
         {
-            string windowOpen = EditorWindow.focusedWindow != null ? EditorWindow.focusedWindow.ToString() : ""; 
+            string windowOpen = EditorWindow.focusedWindow != null ? EditorWindow.focusedWindow.ToString() : "";
             if (windowOpen.IndexOf("UnityEditor.GameView") != -1 && ApplicationIsActivated)
             {
                 int vkcode = Marshal.ReadInt32(lParam);
@@ -86,7 +177,7 @@ public class EditorHotkeyIntercepts
                 }
             }
         }
-        return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        return CallNextHookEx(hookId, nCode, wParam, lParam);
     }
 
     private static KeyCode ToKeyCode(int vkcode)
@@ -98,7 +189,6 @@ public class EditorHotkeyIntercepts
         if (vkcode == 19) return KeyCode.Pause;
         if (vkcode == 20) return KeyCode.CapsLock;
         if (vkcode == 27) return KeyCode.Escape;
-
         if (vkcode == 32) return KeyCode.Space;
         if (vkcode == 33) return KeyCode.PageUp;
         if (vkcode == 34) return KeyCode.PageDown;
@@ -112,7 +202,6 @@ public class EditorHotkeyIntercepts
         if (vkcode == 45) return KeyCode.Insert;
         if (vkcode == 46) return KeyCode.Delete;
         if (vkcode == 47) return KeyCode.Help;
-
         if (vkcode == 48) return KeyCode.Alpha0;
         if (vkcode == 49) return KeyCode.Alpha1;
         if (vkcode == 50) return KeyCode.Alpha2;
@@ -124,7 +213,6 @@ public class EditorHotkeyIntercepts
         if (vkcode == 56) return KeyCode.Alpha8;
         if (vkcode == 57) return KeyCode.Alpha9;
         if (vkcode == 59) return KeyCode.Alpha1;
-
         if (vkcode == 65) return KeyCode.A;
         if (vkcode == 66) return KeyCode.B;
         if (vkcode == 67) return KeyCode.C;
@@ -153,7 +241,6 @@ public class EditorHotkeyIntercepts
         if (vkcode == 90) return KeyCode.Z;
         if (vkcode == 91) return KeyCode.LeftWindows;
         if (vkcode == 93) return KeyCode.AltGr;
-
         if (vkcode == 96) return KeyCode.Keypad0;
         if (vkcode == 97) return KeyCode.Keypad1;
         if (vkcode == 98) return KeyCode.Keypad2;
@@ -185,18 +272,13 @@ public class EditorHotkeyIntercepts
         if (vkcode == 124) return KeyCode.F13;
         if (vkcode == 125) return KeyCode.F14;
         if (vkcode == 126) return KeyCode.F15;
-
         if (vkcode == 144) return KeyCode.Numlock;
         if (vkcode == 145) return KeyCode.ScrollLock;
-
         if (vkcode == 160) return KeyCode.LeftShift;
         if (vkcode == 161) return KeyCode.RightShift;
-
         if (vkcode == 162) return KeyCode.LeftControl;
         if (vkcode == 163) return KeyCode.RightControl;
-
         if (vkcode == 179) return KeyCode.None;
-
         if (vkcode == 186) return KeyCode.Semicolon;
         if (vkcode == 188) return KeyCode.Less;
         if (vkcode == 187) return KeyCode.Plus;
@@ -211,7 +293,7 @@ public class EditorHotkeyIntercepts
 
         Debug.LogWarning("Converter for Virtual Key Code " + vkcode + " not implemented.");
         //consult http://cherrytree.at/misc/vk.htm for the vkcode table
-        
+
         return KeyCode.None;
     }
 
@@ -250,24 +332,6 @@ public class EditorHotkeyIntercepts
 
         //frame later, remove the pressed key
         Input.keysReleased.Remove(keyCode);
-    }
-
-    public static bool ApplicationIsActivated
-    {
-        get
-        {
-            var activatedHandle = GetForegroundWindow();
-            if (activatedHandle == IntPtr.Zero)
-            {
-                return false;       // No window is currently activated
-            }
-
-            var procId = Process.GetCurrentProcess().Id;
-            int activeProcId;
-            GetWindowThreadProcessId(activatedHandle, out activeProcId);
-
-            return activeProcId == procId;
-        }
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
