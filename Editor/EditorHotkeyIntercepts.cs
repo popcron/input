@@ -15,6 +15,7 @@ public class EditorHotkeyIntercepts
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_KEYUP = 0x0101;
+    private const int WM_SYSKEYDOWN = 0x0104;
 
     private static readonly LowLevelKeyboardProc hookCallbackMethod = HookCallback;
     private static IntPtr hookId = IntPtr.Zero;
@@ -140,43 +141,54 @@ public class EditorHotkeyIntercepts
     {
         if (nCode >= 0)
         {
-            string windowOpen = EditorWindow.focusedWindow != null ? EditorWindow.focusedWindow.ToString() : "";
-            if (windowOpen.IndexOf("UnityEditor.GameView") != -1 && ApplicationIsActivated)
+            if (Application.isPlaying)
             {
-                int vkcode = Marshal.ReadInt32(lParam);
-                if (wParam == (IntPtr)WM_KEYDOWN)
+                string windowOpen = EditorWindow.focusedWindow != null ? EditorWindow.focusedWindow.ToString() : "";
+                if (windowOpen.IndexOf("UnityEditor.GameView") != -1 && ApplicationIsActivated)
                 {
-                    bool intercept = false;
-                    if (!keysPressed.Contains(vkcode))
+                    int vkcode = Marshal.ReadInt32(lParam);
+                    if (wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)
                     {
-                        keysPressed.Add(vkcode);
-                        Pressed(vkcode);
-
-                        //supress any ctrl + _ shortcuts in play mode
-                        if (keysPressed.Contains(162) || keysPressed.Contains(163))
+                        bool intercept = false;
+                        if (!keysPressed.Contains(vkcode))
                         {
-                            if (Application.isPlaying)
+                            keysPressed.Add(vkcode);
+                            Pressed(vkcode);
+
+                            //supress any ctrl + _ shortcuts in play mode
+                            if (keysPressed.Contains(162) || keysPressed.Contains(163))
                             {
                                 intercept = true;
                             }
+
+                            //supress any alt + _ shortcuts in play mode
+                            if (keysPressed.Contains(164) || keysPressed.Contains(165))
+                            {
+                                //alt-tab shortcut
+                                if (!keysPressed.Contains(9))
+                                {
+                                    intercept = true;
+                                }
+                            }
+                        }
+
+                        if (intercept)
+                        {
+                            return (IntPtr)(-1);
                         }
                     }
-
-                    if (intercept)
+                    else if (wParam == (IntPtr)WM_KEYUP)
                     {
-                        return (IntPtr)(-1);
-                    }
-                }
-                else if (wParam == (IntPtr)WM_KEYUP)
-                {
-                    if (keysPressed.Contains(vkcode))
-                    {
-                        keysPressed.Remove(vkcode);
-                        Released(vkcode);
+                        if (keysPressed.Contains(vkcode))
+                        {
+                            keysPressed.Remove(vkcode);
+                            Released(vkcode);
+                        }
                     }
                 }
             }
         }
+
         return CallNextHookEx(hookId, nCode, wParam, lParam);
     }
 
@@ -278,6 +290,8 @@ public class EditorHotkeyIntercepts
         if (vkcode == 161) return KeyCode.RightShift;
         if (vkcode == 162) return KeyCode.LeftControl;
         if (vkcode == 163) return KeyCode.RightControl;
+        if (vkcode == 164) return KeyCode.LeftAlt;
+        if (vkcode == 165) return KeyCode.RightAlt;
         if (vkcode == 179) return KeyCode.None;
         if (vkcode == 186) return KeyCode.Semicolon;
         if (vkcode == 188) return KeyCode.Less;

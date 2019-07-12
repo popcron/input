@@ -6,9 +6,12 @@ using UnityInput = UnityEngine.Input;
 
 public class Input : UnityInput
 {
+#if UNITY_EDITOR
     public static List<KeyCode> keys = new List<KeyCode>();
     public static List<KeyCode> keysPressed = new List<KeyCode>();
     public static List<KeyCode> keysReleased = new List<KeyCode>();
+#endif
+
     private static List<KeyCode> consumedKeys = new List<KeyCode>();
 
     private static bool IsOnWindows
