@@ -1,8 +1,9 @@
 # Input
-This is a simple wrapper built on top of the existing unity input system, created in order to add easier support for changing inputs while the game is running and multiple controller support.
+This is a simple wrapper built on top of the existing unity input system, created in order to add easier support for changing inputs while the game is running and multiple controller support, and for suppressing editor shortcuts while in play mode (except for alt-tab).
 
 ## Features
-* Ability to use Control while in play mode
+* Ability to use the Control key while in play mode
+* Ability to use the Alt key while in play mode
 
 ## Installing
 To install for use in Unity, copy everything from this repository to `<YourNewUnityProject>/Packages/Popcron.Input` folder.
@@ -24,6 +25,12 @@ Checking for input using a specific controller:
 bool jumpPlayer1 = Controls.GetButtonDown("Jump");
 bool jumpPlayer2 = Controls.GetButtonDown("Jump", 1);
 bool jumpPlayer3 = Controls.GetButtonDown("Jump", 2);
+```
+
+Disabling input and controls
+```cs
+Controls.Enabled = false;
+Input.Enabled = false;
 ```
 
 ![Map](https://media.discordapp.net/attachments/461266635383111680/563847701255553075/unknown.png)
